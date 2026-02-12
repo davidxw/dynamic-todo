@@ -9,6 +9,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getUserUIState, saveUserUIState } from '@/lib/storage/userState';
 import type { UIState, UpdateUIStateInput } from '@/types';
 
+// Disable Next.js caching for this route
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 /**
  * GET /api/ui/state?userId=default
  * Get the current UI state for a user
@@ -27,7 +31,14 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(state);
+    // Prevent caching to ensure UI updates are immediately visible
+    return NextResponse.json(state, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
+    });
   } catch (error) {
     console.error('Error getting UI state:', error);
     return NextResponse.json(

@@ -18,9 +18,14 @@ interface ChatPanelProps {
 export function ChatPanel({ userId, onClose }: ChatPanelProps) {
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  const { messages, isLoading, error, sendMessage, clearError } = useChatStore();
+  const { messages, isLoading, error, sendMessage, clearError, clearMessages, setCurrentUser } = useChatStore();
+
+  // Set current user on mount/change
+  useEffect(() => {
+    setCurrentUser(userId);
+  }, [userId, setCurrentUser]);
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
@@ -58,15 +63,17 @@ export function ChatPanel({ userId, onClose }: ChatPanelProps) {
         <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
           UI Customization
         </h2>
-        {onClose && (
+        <div className="flex items-center gap-2">
+          {/* New Chat Button */}
           <button
-            onClick={onClose}
-            className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            onClick={clearMessages}
+            className="flex items-center gap-1 px-2 py-1 text-sm text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
             type="button"
-            aria-label="Close chat"
+            aria-label="Start new chat"
+            title="New Chat"
           >
             <svg
-              className="w-5 h-5"
+              className="w-4 h-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -75,11 +82,34 @@ export function ChatPanel({ userId, onClose }: ChatPanelProps) {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
+                d="M12 4v16m8-8H4"
               />
             </svg>
+            <span>New</span>
           </button>
-        )}
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              type="button"
+              aria-label="Close chat"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Messages */}
@@ -152,16 +182,16 @@ export function ChatPanel({ userId, onClose }: ChatPanelProps) {
         onSubmit={handleSubmit}
         className="px-4 py-3 border-t border-gray-200 dark:border-gray-700"
       >
-        <div className="flex gap-2">
-          <input
+        <div className="flex gap-2 items-end">
+          <textarea
             ref={inputRef}
-            type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Describe UI changes..."
             disabled={isLoading}
-            className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
+            rows={2}
+            className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 resize-none"
           />
           <button
             type="submit"

@@ -12,7 +12,6 @@ import {
   writeJsonFile,
   getUserDataPath,
   getDataPath,
-  copyDir,
   ensureDir,
   fileExists,
 } from './fileUtils';
@@ -20,7 +19,6 @@ import {
   TASKS_FILE,
   STATE_FILE,
   HISTORY_FILE,
-  DEFAULT_USER_ID,
   SAMPLE_USERS,
   INITIAL_UI_VERSION,
 } from '@/constants';
@@ -116,26 +114,20 @@ export async function addChangeLogEntry(
  * Resets a user's state to default
  */
 export async function resetUserState(userId: string): Promise<UIState> {
-  const defaultPath = getUserDataPath(DEFAULT_USER_ID);
-  const userPath = getUserDataPath(userId);
+  // Always reset to the hardcoded default tree, not from the default user's current state
+  // This ensures reset works even when the default user's state has been modified
+  const defaultState: UIState = {
+    version: INITIAL_UI_VERSION,
+    userId,
+    tree: JSON.parse(JSON.stringify(DEFAULT_UI_TREE)), // Deep clone to avoid mutations
+    lastModified: new Date().toISOString(),
+  };
   
-  // Copy default state to user directory
-  await copyDir(defaultPath, userPath);
+  await saveUserUIState(userId, defaultState);
   
-  // Return the new state (should always exist after copy)
-  const state = await getUserUIState(userId);
-  if (!state) {
-    // If state still doesn't exist, create a default one
-    const defaultState: UIState = {
-      version: INITIAL_UI_VERSION,
-      userId,
-      tree: DEFAULT_UI_TREE,
-      lastModified: new Date().toISOString(),
-    };
-    await saveUserUIState(userId, defaultState);
-    return defaultState;
-  }
-  return state;
+  console.log('[userState] Reset UI state for user:', userId, 'to version:', defaultState.version);
+  
+  return defaultState;
 }
 
 /**

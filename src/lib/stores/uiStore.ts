@@ -24,10 +24,13 @@ export const useUIStore = create<UIStoreState>((set, get) => ({
   error: null,
 
   fetchUIState: async (userId) => {
+    console.log('[UIStore] Fetching UI state for user:', userId);
     set({ isLoading: true, error: null });
 
     try {
-      const response = await fetch(`/api/ui/state?userId=${encodeURIComponent(userId)}`);
+      const response = await fetch(`/api/ui/state?userId=${encodeURIComponent(userId)}`, {
+        cache: 'no-store',
+      });
 
       if (!response.ok) {
         if (response.status === 404) {
@@ -42,6 +45,7 @@ export const useUIStore = create<UIStoreState>((set, get) => ({
       }
 
       const state: UIState = await response.json();
+      console.log('[UIStore] Received UI state, version:', state.version, 'tree:', state.tree?.component);
       set({ uiState: state, isLoading: false });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';

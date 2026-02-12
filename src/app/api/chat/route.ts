@@ -46,17 +46,45 @@ export async function POST(request: NextRequest) {
           }));
 
           const mcpServer = getMCPServer();
-          let fullContent = '';
           let reasoningCount = 0;
+
+          // Tool handler that executes MCP tools and returns results to the LLM
+          const handleToolCall = async (toolName: string, input: Record<string, unknown>) => {
+            console.log('[Chat API] Executing tool:', toolName, 'with input:', JSON.stringify(input));
+            
+            const toolResult = await mcpServer.handleRequest({
+              jsonrpc: '2.0',
+              id: `tool_${Date.now()}`,
+              method: 'tools/call',
+              params: {
+                name: toolName,
+                arguments: input,
+              },
+            });
+
+            console.log('[Chat API] Tool result:', JSON.stringify(toolResult.result));
+
+            // Send tool call event to the client for UI display
+            sendEvent('tool_call', {
+              toolCall: {
+                tool: toolName,
+                args: input,
+                result: toolResult.result,
+              },
+            });
+
+            // Return result to the LLM so it can reason about it
+            return toolResult.result;
+          };
 
           // Stream chat completion with tool calling
           const result = await copilot.streamCompletion({
             messages: [{ role: 'user', content }],
             tools: copilotTools,
             systemPrompt: getSystemPrompt(userId),
+            toolHandler: handleToolCall,
             onEvent: async (event) => {
               if (event.type === 'text' && event.text) {
-                fullContent += event.text;
                 sendEvent('text', { text: event.text });
 
                 // Detect reasoning steps (lines starting with "Step" or numbered)
@@ -69,26 +97,8 @@ export async function POST(request: NextRequest) {
                     });
                   }
                 }
-              } else if (event.type === 'tool_use' && event.toolCall) {
-                // Execute tool and send result
-                const toolResult = await mcpServer.handleRequest({
-                  jsonrpc: '2.0',
-                  id: event.toolCall.id,
-                  method: 'tools/call',
-                  params: {
-                    name: event.toolCall.name,
-                    arguments: event.toolCall.input,
-                  },
-                });
-
-                sendEvent('tool_call', {
-                  toolCall: {
-                    tool: event.toolCall.name,
-                    args: event.toolCall.input,
-                    result: toolResult.result,
-                  },
-                });
               }
+              // Note: tool_use events are handled by toolHandler, which also sends tool_call events
             },
           });
 
@@ -131,7 +141,7 @@ export async function POST(request: NextRequest) {
 function getSystemPrompt(userId: string): string {
   return `You are a helpful UI customization assistant for a Todo application.
 
-Current user: ${userId}
+Current user ID: "${userId}" - Always use this value for the userId parameter in tool calls.
 
 Your role is to help users modify the Todo app's interface by:
 1. Understanding what changes they want to make
@@ -139,22 +149,24 @@ Your role is to help users modify the Todo app's interface by:
 3. Explaining your reasoning as you make changes
 
 Available tools:
-- get_current_tree: Get the current UI component tree for the user
-- get_component_details: Get information about a specific component and its props
-- validate_tree: Validate a UI tree structure before applying
-- modify_ui: Apply changes to the UI tree (add, remove, update, replace operations)
+- get_current_tree(userId): Get the current UI component tree for the user
+- get_component_details(componentName): Get information about a specific component and its props
+- validate_tree(tree): Validate a UI tree structure before applying changes
+- modify_ui(userId, operation, path, component?, props?): Apply changes to the UI tree
+
+Operations for modify_ui:
+- "add": Add a new component at path (requires component)
+- "remove": Remove component at path
+- "update": Update props of component at path (requires props)
+- "replace": Replace component at path with new component (requires component)
 
 When making changes:
-1. First, examine the current tree to understand the structure
+1. First call get_current_tree to understand the structure
 2. Identify which components need to be modified
-3. Validate your proposed changes if complex
-4. Apply the modifications
-5. Summarize what was changed
+3. Apply the modifications using modify_ui
+4. Summarize what was changed
 
 Be conversational and explain what you're doing. If a request is unclear, ask for clarification.
 
-Example modifications:
-- "Add a priority dropdown" → Update TaskItem with showPriority: true
-- "Show due dates" → Update TaskItem or TaskInput with showDueDate: true
-- "Add a filter bar" → Add TaskFilter component to the tree`;
+Important: Always use userId="${userId}" in get_current_tree and modify_ui tool calls.`;
 }

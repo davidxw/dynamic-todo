@@ -15,12 +15,15 @@ interface TodoAppProps {
   showHeader?: boolean;
   userId?: string;
   initialFilter?: TaskFilter;
+  // TEMPORARY: Test marker to verify dynamic rendering - remove after testing
+  testMarker?: string;
 }
 
 export function TodoApp({
   showHeader = true,
   userId = DEFAULT_USER_ID,
   initialFilter = 'all',
+  testMarker,
 }: TodoAppProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [filter, setFilter] = useState<TaskFilter>(initialFilter);
@@ -143,6 +146,13 @@ export function TodoApp({
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
+      {/* TEMPORARY: Test marker display - remove after testing */}
+      {testMarker && (
+        <div className="mb-4 p-2 bg-orange-100 dark:bg-orange-900/30 border border-orange-300 dark:border-orange-700 rounded text-orange-800 dark:text-orange-200 text-sm font-mono">
+          TEST MARKER: {testMarker}
+        </div>
+      )}
+
       {showHeader && (
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">

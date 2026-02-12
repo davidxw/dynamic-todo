@@ -17,6 +17,9 @@ interface AppHeaderProps {
   onReset?: () => Promise<void>;
   showUserSwitcher?: boolean;
   onUserChange?: (userId: string) => void;
+  // TEMPORARY: Test button props - remove after testing
+  showTestButton?: boolean;
+  onTest?: () => void;
 }
 
 export function AppHeader({
@@ -27,6 +30,8 @@ export function AppHeader({
   onReset,
   showUserSwitcher = false,
   onUserChange,
+  showTestButton = false,
+  onTest,
 }: AppHeaderProps) {
   const { resolvedTheme, toggleTheme } = useTheme();
 
@@ -97,6 +102,18 @@ export function AppHeader({
             {/* Reset Button */}
             {showResetButton && onReset && (
               <ResetButton onReset={onReset} />
+            )}
+
+            {/* TEMPORARY: Test Button - remove after testing */}
+            {showTestButton && onTest && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onTest}
+                className="text-orange-600 dark:text-orange-400 border border-orange-300 dark:border-orange-600"
+              >
+                Test UI
+              </Button>
             )}
 
             {/* Chat Toggle */}

@@ -2,16 +2,21 @@
  * Chat State Management with Zustand
  *
  * Manages chat messages, loading state, and AI interactions.
+ * Messages are persisted to localStorage per user.
  */
 
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import type { ChatMessage, ReasoningStep, ToolCall } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
+import { useUIStore } from './uiStore';
 
 interface ChatState {
   messages: ChatMessage[];
+  currentUserId: string | null;
   isLoading: boolean;
   error: string | null;
+  setCurrentUser: (userId: string) => void;
   addMessage: (message: Omit<ChatMessage, 'id' | 'timestamp'>) => void;
   updateLastAssistantMessage: (updates: Partial<ChatMessage>) => void;
   sendMessage: (content: string, userId: string) => Promise<void>;
@@ -19,10 +24,20 @@ interface ChatState {
   clearError: () => void;
 }
 
-export const useChatStore = create<ChatState>((set, get) => ({
+export const useChatStore = create<ChatState>()(
+  persist(
+    (set, get) => ({
   messages: [],
+  currentUserId: null,
   isLoading: false,
   error: null,
+
+  setCurrentUser: (userId) => {
+    const { currentUserId } = get();
+    if (currentUserId !== userId) {
+      set({ currentUserId: userId });
+    }
+  },
 
   addMessage: (message) => {
     const newMessage: ChatMessage = {
@@ -113,6 +128,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
               case 'tool_call':
                 toolCalls.push(event.toolCall);
                 updateLastAssistantMessage({ toolCalls: [...toolCalls] });
+                // Refresh UI state after each tool call to show changes in real-time
+                console.log('[ChatStore] Tool call received, refreshing UI state for user:', userId);
+                try {
+                  await useUIStore.getState().fetchUIState(userId);
+                  console.log('[ChatStore] UI state refreshed successfully');
+                } catch (err) {
+                  console.error('[ChatStore] Failed to refresh UI state:', err);
+                }
                 break;
 
               case 'summary':
@@ -149,4 +172,13 @@ export const useChatStore = create<ChatState>((set, get) => ({
   clearError: () => {
     set({ error: null });
   },
-}));
+    }),
+    {
+      name: 'dynamic-todo-chat',
+      partialize: (state) => ({
+        messages: state.messages,
+        currentUserId: state.currentUserId,
+      }),
+    }
+  )
+);
