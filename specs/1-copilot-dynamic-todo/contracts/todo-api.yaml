@@ -1,0 +1,468 @@
+openapi: 3.0.3
+info:
+  title: Dynamic Todo API
+  description: |
+    REST API for the Dynamic Todo application. This API provides comprehensive
+    task management capabilities, intentionally exposing more features than
+    the default UI to enable user-driven customization via the chat interface.
+  version: 1.0.0
+  contact:
+    name: Dynamic Todo Team
+
+servers:
+  - url: /api
+    description: Next.js API routes
+
+tags:
+  - name: Tasks
+    description: Task CRUD operations
+  - name: UI
+    description: Dynamic UI state management
+  - name: Users
+    description: Sample user management
+
+paths:
+  /tasks:
+    get:
+      summary: List all tasks
+      operationId: listTasks
+      tags: [Tasks]
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: string
+          description: User ID to fetch tasks for
+        - name: filter
+          in: query
+          schema:
+            type: string
+            enum: [all, active, completed]
+            default: all
+          description: Filter tasks by completion status
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+            enum: [createdAt, title, priority, dueDate]
+            default: createdAt
+          description: Sort field
+        - name: sortOrder
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+          description: Sort direction
+      responses:
+        '200':
+          description: List of tasks
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tasks:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Task'
+                  total:
+                    type: integer
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+    post:
+      summary: Create a new task
+      operationId: createTask
+      tags: [Tasks]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId, title]
+              properties:
+                userId:
+                  type: string
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+                metadata:
+                  type: object
+                  additionalProperties: true
+                  description: Extensible task properties (priority, dueDate, etc.)
+      responses:
+        '201':
+          description: Task created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /tasks/{taskId}:
+    parameters:
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+
+    get:
+      summary: Get a single task
+      operationId: getTask
+      tags: [Tasks]
+      responses:
+        '200':
+          description: Task details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      summary: Update a task
+      operationId: updateTask
+      tags: [Tasks]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+                completed:
+                  type: boolean
+                metadata:
+                  type: object
+                  additionalProperties: true
+      responses:
+        '200':
+          description: Updated task
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      summary: Delete a task
+      operationId: deleteTask
+      tags: [Tasks]
+      responses:
+        '204':
+          description: Task deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /tasks/bulk:
+    post:
+      summary: Bulk task operations
+      operationId: bulkTaskOperation
+      tags: [Tasks]
+      description: |
+        Perform bulk operations on multiple tasks. Useful for batch completion,
+        deletion, or metadata updates. Not exposed in default UI.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId, operation, taskIds]
+              properties:
+                userId:
+                  type: string
+                operation:
+                  type: string
+                  enum: [complete, uncomplete, delete, updateMetadata]
+                taskIds:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                metadata:
+                  type: object
+                  additionalProperties: true
+                  description: For updateMetadata operation
+      responses:
+        '200':
+          description: Bulk operation result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  updated:
+                    type: integer
+                  failed:
+                    type: array
+                    items:
+                      type: string
+
+  /ui/state:
+    get:
+      summary: Get current UI state
+      operationId: getUIState
+      tags: [UI]
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Current UI state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UIState'
+
+    put:
+      summary: Update UI state
+      operationId: updateUIState
+      tags: [UI]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId, version, tree]
+              properties:
+                userId:
+                  type: string
+                version:
+                  type: integer
+                  description: Must match current version (optimistic lock)
+                tree:
+                  $ref: '#/components/schemas/UITree'
+      responses:
+        '200':
+          description: Updated UI state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UIState'
+        '409':
+          description: Version conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /ui/reset:
+    post:
+      summary: Reset UI to default state
+      operationId: resetUI
+      tags: [UI]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId]
+              properties:
+                userId:
+                  type: string
+      responses:
+        '200':
+          description: UI reset to default
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UIState'
+
+  /ui/history:
+    get:
+      summary: Get UI change history
+      operationId: getUIHistory
+      tags: [UI]
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+      responses:
+        '200':
+          description: Change history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  changes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ChangeLog'
+
+  /users:
+    get:
+      summary: List sample users
+      operationId: listUsers
+      tags: [Users]
+      responses:
+        '200':
+          description: List of sample users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+
+  /users/{userId}:
+    get:
+      summary: Get user details
+      operationId: getUser
+      tags: [Users]
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  schemas:
+    Task:
+      type: object
+      required: [id, title, completed, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        completed:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+        metadata:
+          type: object
+          additionalProperties: true
+          description: Extensible properties (priority, dueDate, tags, notes, etc.)
+
+    User:
+      type: object
+      required: [id, displayName, isDefault]
+      properties:
+        id:
+          type: string
+        displayName:
+          type: string
+        isDefault:
+          type: boolean
+
+    UITree:
+      type: object
+      required: [component]
+      properties:
+        component:
+          type: string
+          description: Component name from registry
+        props:
+          type: object
+          additionalProperties: true
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/UITree'
+
+    UIState:
+      type: object
+      required: [version, userId, tree, lastModified]
+      properties:
+        version:
+          type: integer
+        userId:
+          type: string
+        tree:
+          $ref: '#/components/schemas/UITree'
+        lastModified:
+          type: string
+          format: date-time
+
+    ChangeLog:
+      type: object
+      required: [id, timestamp, description, beforeTree, afterTree, triggeredBy]
+      properties:
+        id:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        description:
+          type: string
+        beforeTree:
+          $ref: '#/components/schemas/UITree'
+        afterTree:
+          $ref: '#/components/schemas/UITree'
+        triggeredBy:
+          type: string
+          description: Chat message ID
+
+    Error:
+      type: object
+      required: [message, code]
+      properties:
+        message:
+          type: string
+          description: User-friendly error message
+        code:
+          type: string
+          description: Machine-readable error code
+        suggestion:
+          type: string
+          description: What the user can do to resolve
+
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
