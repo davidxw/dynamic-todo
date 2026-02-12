@@ -7,8 +7,9 @@
 
 - Node.js 18+ (LTS recommended)
 - npm 9+ or pnpm 8+
-- GitHub account with Copilot access
-- GitHub Personal Access Token with `copilot` scope
+- GitHub account with Copilot subscription
+- GitHub Copilot CLI installed (`copilot` in PATH)
+- GitHub Personal Access Token with `copilot` scope (or use `copilot auth login`)
 
 ## Setup
 
@@ -19,21 +20,24 @@ cd src/dynamic-todo
 npm install
 ```
 
-### 2. Configure Environment
+### 2. Configure Authentication
 
-Copy the sample environment file and fill in your values:
+The SDK supports two authentication methods:
 
-```bash
-cp .env.sample .env
+**Option A: Environment Variables** (for CI/CD, automation)
+
+Set one of these in `.env.local` (checked in priority order):
+```env
+COPILOT_GITHUB_TOKEN=ghp_your_token  # Recommended
+# or GH_TOKEN=ghp_your_token
+# or GITHUB_TOKEN=ghp_your_token
 ```
 
-Required variables:
-```env
-# GitHub Copilot SDK authentication
-GITHUB_TOKEN=ghp_your_personal_access_token
+**Option B: Signed-in User** (for development)
 
-# Optional: Override default port
-PORT=3000
+If no environment variables are set:
+```bash
+copilot auth login
 ```
 
 ### 3. Initialize User Data

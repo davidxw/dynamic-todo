@@ -8,21 +8,24 @@
 
 ### 1. GitHub Copilot SDK Integration
 
-**Decision**: Use `@anthropic-ai/claude` pattern via GitHub Copilot extensions API
+**Decision**: Use `@github/copilot-sdk` for AI-powered chat and tool calling
 
 **Rationale**: 
-- GitHub Copilot SDK provides built-in streaming, tool calling, and conversation management
-- Direct integration with VS Code and web interfaces
-- Supports MCP (Model Context Protocol) for tool/component discovery
+- GitHub Copilot SDK provides built-in streaming, tool calling, and session management
+- Communicates with Copilot CLI via JSON-RPC for agentic workflows
+- Supports custom tools with `defineTool` API and Zod schema validation
+- Uses existing GitHub authentication (token or logged-in user)
 
 **Alternatives Considered**:
 - OpenAI API directly: Rejected - extra authentication complexity, not integrated with GitHub ecosystem
-- Anthropic Claude API directly: Rejected - requires separate API key management, no MCP support
+- Anthropic Claude API directly: Rejected - requires separate API key management
+- @copilot-extensions/preview-sdk: Rejected - designed for building GitHub Copilot Extensions (webhooks), not standalone apps
 
 **Implementation Notes**:
-- Use `copilot-extensions/preview-sdk` npm package
-- Configure via `GITHUB_TOKEN` environment variable
-- Tool calls use MCP protocol for component discovery
+- Use `@github/copilot-sdk` npm package
+- Requires GitHub Copilot CLI installed (`copilot` in PATH)
+- Configure via `GITHUB_TOKEN` environment variable or `copilot auth login`
+- Tool calls use `defineTool` with Zod schemas for type-safe handlers
 
 ### 2. Dynamic UI Generation Approach
 
@@ -121,7 +124,8 @@ data/users/{userId}/
 
 | Dependency | Purpose | Justification (Constitution Principle V) |
 |------------|---------|------------------------------------------|
-| `@copilot-extensions/preview-sdk` | Copilot integration | Core feature requirement, no alternative |
+| `@github/copilot-sdk` | GitHub Copilot integration | Core feature, provides agentic workflows and tool calling |
+| `zod` | Schema validation | Optional, useful for type-safe tool handlers with defineTool |
 | `@modelcontextprotocol/sdk` | MCP server | Required for component discovery feature |
 | `zustand` | State management | Minimal footprint, explicit over Redux |
 | `tailwindcss` | Styling | Already in project, no additional complexity |

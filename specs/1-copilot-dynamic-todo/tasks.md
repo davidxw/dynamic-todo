@@ -23,16 +23,16 @@ Based on plan.md, project structure uses `src/` with Next.js App Router.
 
 **Purpose**: Project initialization, environment, and shared dependencies
 
-- [ ] T001 Create project directory structure per plan.md in src/
-- [ ] T002 [P] Create .env.sample with GITHUB_TOKEN and PORT variables
-- [ ] T003 [P] Update .gitignore to include data/users/ directory
-- [ ] T004 Install dependencies: @copilot-extensions/preview-sdk, @modelcontextprotocol/sdk, zustand, uuid in package.json
-- [ ] T005 [P] Create TypeScript interfaces for Task entity in src/types/task.ts
-- [ ] T006 [P] Create TypeScript interfaces for User entity in src/types/user.ts
-- [ ] T007 [P] Create TypeScript interfaces for ChatMessage, ReasoningStep, ToolCall in src/types/chat.ts
-- [ ] T008 [P] Create TypeScript interfaces for UIComponent, PropDefinition, UITree, UIState in src/types/ui.ts
-- [ ] T009 [P] Create TypeScript interfaces for ChangeLog in src/types/changelog.ts
-- [ ] T010 [P] Create configuration constants in src/constants/index.ts
+- [X] T001 Create project directory structure per plan.md in src/
+- [X] T002 [P] Create .env.sample with GITHUB_TOKEN and PORT variables
+- [X] T003 [P] Update .gitignore to include data/users/ directory
+- [X] T004 Install dependencies: @github/copilot-sdk, @modelcontextprotocol/sdk, zustand, uuid, zod in package.json
+- [X] T005 [P] Create TypeScript interfaces for Task entity in src/types/task.ts
+- [X] T006 [P] Create TypeScript interfaces for User entity in src/types/user.ts
+- [X] T007 [P] Create TypeScript interfaces for ChatMessage, ReasoningStep, ToolCall in src/types/chat.ts
+- [X] T008 [P] Create TypeScript interfaces for UIComponent, PropDefinition, UITree, UIState in src/types/ui.ts
+- [X] T009 [P] Create TypeScript interfaces for ChangeLog in src/types/changelog.ts
+- [X] T010 [P] Create configuration constants in src/constants/index.ts
 
 ---
 
@@ -42,20 +42,20 @@ Based on plan.md, project structure uses `src/` with Next.js App Router.
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T011 Implement file-based storage utilities for reading/writing JSON in src/lib/storage/fileUtils.ts
-- [ ] T012 Implement user state storage service in src/lib/storage/userState.ts
-- [ ] T013 [P] Create default user data directory structure in data/users/default/
-- [ ] T014 [P] Create sample alice user data directory in data/users/alice/
-- [ ] T015 [P] Create sample bob user data directory in data/users/bob/
-- [ ] T016 Implement global error handling and logging utilities in src/lib/errorHandling.ts
-- [ ] T017 [P] Create ThemeProvider context for dark/light mode in src/components/ui/ThemeProvider.tsx
-- [ ] T018 [P] Create shared Button component in src/components/ui/Button.tsx
-- [ ] T019 [P] Create shared TextInput component in src/components/ui/TextInput.tsx
-- [ ] T020 [P] Create shared Checkbox component in src/components/ui/Checkbox.tsx
-- [ ] T021 [P] Create shared Card component in src/components/ui/Card.tsx
-- [ ] T022 [P] Create shared Badge component in src/components/ui/Badge.tsx
-- [ ] T023 Export all shared UI primitives from src/components/ui/index.ts
-- [ ] T024 Create npm script init-users to initialize user directories in package.json
+- [X] T011 Implement file-based storage utilities for reading/writing JSON in src/lib/storage/fileUtils.ts
+- [X] T012 Implement user state storage service in src/lib/storage/userState.ts
+- [X] T013 [P] Create default user data directory structure in data/users/default/
+- [X] T014 [P] Create sample alice user data directory in data/users/alice/
+- [X] T015 [P] Create sample bob user data directory in data/users/bob/
+- [X] T016 Implement global error handling and logging utilities in src/lib/errorHandling.ts
+- [X] T017 [P] Create ThemeProvider context for dark/light mode in src/components/ui/ThemeProvider.tsx
+- [X] T018 [P] Create shared Button component in src/components/ui/Button.tsx
+- [X] T019 [P] Create shared TextInput component in src/components/ui/TextInput.tsx
+- [X] T020 [P] Create shared Checkbox component in src/components/ui/Checkbox.tsx
+- [X] T021 [P] Create shared Card component in src/components/ui/Card.tsx
+- [X] T022 [P] Create shared Badge component in src/components/ui/Badge.tsx
+- [X] T023 Export all shared UI primitives from src/components/ui/index.ts
+- [X] T024 Create npm script init-users to initialize user directories in package.json
 
 **Checkpoint**: Foundation ready - user story implementation can now begin
 
@@ -69,22 +69,22 @@ Based on plan.md, project structure uses `src/` with Next.js App Router.
 
 ### Implementation for User Story 1
 
-- [ ] T025 [P] [US1] Implement Task service for CRUD operations in src/lib/services/taskService.ts
-- [ ] T026 [US1] Create GET /api/tasks endpoint (list tasks with filter/sort) in src/app/api/tasks/route.ts
-- [ ] T027 [US1] Create POST /api/tasks endpoint (create task) in src/app/api/tasks/route.ts
-- [ ] T028 [US1] Create GET /api/tasks/[taskId] endpoint in src/app/api/tasks/[taskId]/route.ts
-- [ ] T029 [US1] Create PATCH /api/tasks/[taskId] endpoint (update task) in src/app/api/tasks/[taskId]/route.ts
-- [ ] T030 [US1] Create DELETE /api/tasks/[taskId] endpoint in src/app/api/tasks/[taskId]/route.ts
-- [ ] T031 [US1] Create POST /api/tasks/bulk endpoint for bulk operations in src/app/api/tasks/bulk/route.ts
-- [ ] T032 [P] [US1] Create TaskInput component for adding tasks in src/components/todo/TaskInput.tsx
-- [ ] T033 [P] [US1] Create TaskItem component with toggle/delete in src/components/todo/TaskItem.tsx
-- [ ] T034 [US1] Create TaskList component to display tasks in src/components/todo/TaskList.tsx
-- [ ] T035 [US1] Create TodoApp container component in src/components/todo/TodoApp.tsx
-- [ ] T036 [P] [US1] Create AppHeader component with theme toggle in src/components/chrome/AppHeader.tsx
-- [ ] T037 [US1] Update globals.css with Tailwind dark mode support in src/app/globals.css
-- [ ] T038 [US1] Update root layout with ThemeProvider in src/app/layout.tsx
-- [ ] T039 [US1] Implement main page with TodoApp in src/app/page.tsx
-- [ ] T040 [US1] Create default tasks.json with sample tasks in data/users/default/tasks.json
+- [X] T025 [P] [US1] Implement Task service for CRUD operations in src/lib/services/taskService.ts
+- [X] T026 [US1] Create GET /api/tasks endpoint (list tasks with filter/sort) in src/app/api/tasks/route.ts
+- [X] T027 [US1] Create POST /api/tasks endpoint (create task) in src/app/api/tasks/route.ts
+- [X] T028 [US1] Create GET /api/tasks/[taskId] endpoint in src/app/api/tasks/[taskId]/route.ts
+- [X] T029 [US1] Create PATCH /api/tasks/[taskId] endpoint (update task) in src/app/api/tasks/[taskId]/route.ts
+- [X] T030 [US1] Create DELETE /api/tasks/[taskId] endpoint in src/app/api/tasks/[taskId]/route.ts
+- [X] T031 [US1] Create POST /api/tasks/bulk endpoint for bulk operations in src/app/api/tasks/bulk/route.ts
+- [X] T032 [P] [US1] Create TaskInput component for adding tasks in src/components/todo/TaskInput.tsx
+- [X] T033 [P] [US1] Create TaskItem component with toggle/delete in src/components/todo/TaskItem.tsx
+- [X] T034 [US1] Create TaskList component to display tasks in src/components/todo/TaskList.tsx
+- [X] T035 [US1] Create TodoApp container component in src/components/todo/TodoApp.tsx
+- [X] T036 [P] [US1] Create AppHeader component with theme toggle in src/components/chrome/AppHeader.tsx
+- [X] T037 [US1] Update globals.css with Tailwind dark mode support in src/app/globals.css
+- [X] T038 [US1] Update root layout with ThemeProvider in src/app/layout.tsx
+- [X] T039 [US1] Implement main page with TodoApp in src/app/page.tsx
+- [X] T040 [US1] Create default tasks.json with sample tasks in data/users/default/tasks.json
 
 **Checkpoint**: User Story 1 complete - Todo app is fully functional with theme toggle
 
@@ -98,28 +98,28 @@ Based on plan.md, project structure uses `src/` with Next.js App Router.
 
 ### Implementation for User Story 2
 
-- [ ] T041 [P] [US2] Implement GitHub Copilot SDK client wrapper in src/lib/copilot/client.ts
-- [ ] T042 [P] [US2] Create MCP component registry with all UI components in src/lib/mcp/components.ts
-- [ ] T043 [US2] Implement MCP server with HTTP transport in src/lib/mcp/server.ts
-- [ ] T044 [US2] Implement modify_ui MCP tool in src/lib/mcp/tools/modifyUI.ts
-- [ ] T045 [US2] Implement validate_tree MCP tool in src/lib/mcp/tools/validateTree.ts
-- [ ] T046 [US2] Implement get_current_tree MCP tool in src/lib/mcp/tools/getCurrentTree.ts
-- [ ] T047 [US2] Implement get_component_details MCP tool in src/lib/mcp/tools/getComponentDetails.ts
-- [ ] T048 [US2] Create GET /api/mcp/sse endpoint for SSE streaming in src/app/api/mcp/sse/route.ts
-- [ ] T049 [US2] Create POST /api/mcp endpoint for tool invocations in src/app/api/mcp/route.ts
-- [ ] T050 [US2] Create GET /api/ui/state endpoint in src/app/api/ui/state/route.ts
-- [ ] T051 [US2] Create PUT /api/ui/state endpoint with optimistic locking in src/app/api/ui/state/route.ts
-- [ ] T052 [US2] Create GET /api/ui/history endpoint in src/app/api/ui/history/route.ts
-- [ ] T053 [P] [US2] Create ChatMessage component in src/components/chat/ChatMessage.tsx
-- [ ] T054 [P] [US2] Create ReasoningDisplay component for AI steps in src/components/chat/ReasoningDisplay.tsx
-- [ ] T055 [P] [US2] Create ToolCallDisplay component in src/components/chat/ToolCallDisplay.tsx
-- [ ] T056 [US2] Create ChatPanel component with input and messages in src/components/chat/ChatPanel.tsx
-- [ ] T057 [US2] Implement chat state management with zustand in src/lib/stores/chatStore.ts
-- [ ] T058 [US2] Implement UI state management with zustand in src/lib/stores/uiStore.ts
-- [ ] T059 [US2] Create dynamic UI renderer component in src/components/ui/DynamicRenderer.tsx
-- [ ] T060 [US2] Integrate ChatPanel into main layout in src/app/layout.tsx
-- [ ] T061 [US2] Create default state.json with initial UITree in data/users/default/state.json
-- [ ] T062 [US2] Create default history.json for change log in data/users/default/history.json
+- [X] T041 [P] [US2] Implement GitHub Copilot SDK client wrapper in src/lib/copilot/client.ts
+- [X] T042 [P] [US2] Create MCP component registry with all UI components in src/lib/mcp/components.ts
+- [X] T043 [US2] Implement MCP server with HTTP transport in src/lib/mcp/server.ts
+- [X] T044 [US2] Implement modify_ui MCP tool in src/lib/mcp/tools/modifyUI.ts
+- [X] T045 [US2] Implement validate_tree MCP tool in src/lib/mcp/tools/validateTree.ts
+- [X] T046 [US2] Implement get_current_tree MCP tool in src/lib/mcp/tools/getCurrentTree.ts
+- [X] T047 [US2] Implement get_component_details MCP tool in src/lib/mcp/tools/getComponentDetails.ts
+- [X] T048 [US2] Create GET /api/mcp/sse endpoint for SSE streaming in src/app/api/mcp/sse/route.ts
+- [X] T049 [US2] Create POST /api/mcp endpoint for tool invocations in src/app/api/mcp/route.ts
+- [X] T050 [US2] Create GET /api/ui/state endpoint in src/app/api/ui/state/route.ts
+- [X] T051 [US2] Create PUT /api/ui/state endpoint with optimistic locking in src/app/api/ui/state/route.ts
+- [X] T052 [US2] Create GET /api/ui/history endpoint in src/app/api/ui/history/route.ts
+- [X] T053 [P] [US2] Create ChatMessage component in src/components/chat/ChatMessage.tsx
+- [X] T054 [P] [US2] Create ReasoningDisplay component for AI steps in src/components/chat/ReasoningDisplay.tsx
+- [X] T055 [P] [US2] Create ToolCallDisplay component in src/components/chat/ToolCallDisplay.tsx
+- [X] T056 [US2] Create ChatPanel component with input and messages in src/components/chat/ChatPanel.tsx
+- [X] T057 [US2] Implement chat state management with zustand in src/lib/stores/chatStore.ts
+- [X] T058 [US2] Implement UI state management with zustand in src/lib/stores/uiStore.ts
+- [X] T059 [US2] Create dynamic UI renderer component in src/components/ui/DynamicRenderer.tsx
+- [X] T060 [US2] Integrate ChatPanel into main layout in src/app/layout.tsx
+- [X] T061 [US2] Create default state.json with initial UITree in data/users/default/state.json
+- [X] T062 [US2] Create default history.json for change log in data/users/default/history.json
 
 **Checkpoint**: User Story 2 complete - Chat interface works with AI customization
 
@@ -133,11 +133,11 @@ Based on plan.md, project structure uses `src/` with Next.js App Router.
 
 ### Implementation for User Story 3
 
-- [ ] T063 [US3] Create POST /api/ui/reset endpoint in src/app/api/ui/reset/route.ts
-- [ ] T064 [US3] Implement resetState function in src/lib/storage/userState.ts
-- [ ] T065 [US3] Create ResetButton component in src/components/chrome/ResetButton.tsx
-- [ ] T066 [US3] Add ResetButton to AppHeader in src/components/chrome/AppHeader.tsx
-- [ ] T067 [US3] Add reset action to uiStore in src/lib/stores/uiStore.ts
+- [X] T063 [US3] Create POST /api/ui/reset endpoint in src/app/api/ui/reset/route.ts
+- [X] T064 [US3] Implement resetState function in src/lib/storage/userState.ts
+- [X] T065 [US3] Create ResetButton component in src/components/chrome/ResetButton.tsx
+- [X] T066 [US3] Add ResetButton to AppHeader in src/components/chrome/AppHeader.tsx
+- [X] T067 [US3] Add reset action to uiStore in src/lib/stores/uiStore.ts
 
 **Checkpoint**: User Story 3 complete - Reset functionality works
 
@@ -151,15 +151,15 @@ Based on plan.md, project structure uses `src/` with Next.js App Router.
 
 ### Implementation for User Story 4
 
-- [ ] T068 [US4] Create GET /api/users endpoint in src/app/api/users/route.ts
-- [ ] T069 [US4] Create GET /api/users/[userId] endpoint in src/app/api/users/[userId]/route.ts
-- [ ] T070 [US4] Create user service for user operations in src/lib/services/userService.ts
-- [ ] T071 [US4] Create UserSwitcher dropdown component in src/components/chrome/UserSwitcher.tsx
-- [ ] T072 [US4] Implement current user state management with zustand in src/lib/stores/userStore.ts
-- [ ] T073 [US4] Add UserSwitcher to AppHeader in src/components/chrome/AppHeader.tsx
-- [ ] T074 [US4] Create customized state.json for alice in data/users/alice/state.json
-- [ ] T075 [US4] Create customized state.json for bob in data/users/bob/state.json
-- [ ] T076 [US4] Create users.json configuration file in data/users/users.json
+- [X] T068 [US4] Create GET /api/users endpoint in src/app/api/users/route.ts
+- [X] T069 [US4] Create GET /api/users/[userId] endpoint in src/app/api/users/[userId]/route.ts
+- [X] T070 [US4] Create user service for user operations in src/lib/services/userService.ts
+- [X] T071 [US4] Create UserSwitcher dropdown component in src/components/chrome/UserSwitcher.tsx
+- [X] T072 [US4] Implement current user state management with zustand in src/lib/stores/userStore.ts
+- [X] T073 [US4] Add UserSwitcher to AppHeader in src/components/chrome/AppHeader.tsx
+- [X] T074 [US4] Create customized state.json for alice in data/users/alice/state.json
+- [X] T075 [US4] Create customized state.json for bob in data/users/bob/state.json
+- [X] T076 [US4] Create users.json configuration file in data/users/users.json
 
 **Checkpoint**: User Story 4 complete - User switching works
 
@@ -173,13 +173,13 @@ Based on plan.md, project structure uses `src/` with Next.js App Router.
 
 ### Implementation for User Story 5
 
-- [ ] T077 [US5] Expose components resource via MCP in src/lib/mcp/resources/componentsResource.ts
-- [ ] T078 [US5] Add component discovery tool responses in src/lib/copilot/client.ts
-- [ ] T079 [US5] Create Select dropdown component in src/components/ui/Select.tsx
-- [ ] T080 [US5] Create DatePicker component in src/components/ui/DatePicker.tsx
-- [ ] T081 [US5] Create TaskFilter component in src/components/todo/TaskFilter.tsx
-- [ ] T082 [US5] Create TaskStats component in src/components/todo/TaskStats.tsx
-- [ ] T083 [US5] Register all new components in MCP registry in src/lib/mcp/components.ts
+- [X] T077 [US5] Expose components resource via MCP in src/lib/mcp/resources/componentsResource.ts
+- [X] T078 [US5] Add component discovery tool responses in src/lib/copilot/client.ts
+- [X] T079 [US5] Create Select dropdown component in src/components/ui/Select.tsx
+- [X] T080 [US5] Create DatePicker component in src/components/ui/DatePicker.tsx
+- [X] T081 [US5] Create TaskFilter component in src/components/todo/TaskFilter.tsx
+- [X] T082 [US5] Create TaskStats component in src/components/todo/TaskStats.tsx
+- [X] T083 [US5] Register all new components in MCP registry in src/lib/mcp/components.ts
 
 **Checkpoint**: User Story 5 complete - Component discovery works
 
@@ -189,13 +189,13 @@ Based on plan.md, project structure uses `src/` with Next.js App Router.
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T084 [P] Create README.md with setup instructions in src/
-- [ ] T085 [P] Add error boundary component for graceful error handling in src/components/ui/ErrorBoundary.tsx
-- [ ] T086 Add loading states to all async operations
-- [ ] T087 [P] Add keyboard navigation support to TaskItem and chat input
-- [ ] T088 Validate all user stories work end-to-end per quickstart.md
-- [ ] T089 Performance optimization: ensure <500ms UI updates
-- [ ] T090 Ensure 60fps animations on theme toggle and UI updates
+- [X] T084 [P] Create README.md with setup instructions in src/
+- [X] T085 [P] Add error boundary component for graceful error handling in src/components/ui/ErrorBoundary.tsx
+- [X] T086 Add loading states to all async operations
+- [X] T087 [P] Add keyboard navigation support to TaskItem and chat input
+- [X] T088 Validate all user stories work end-to-end per quickstart.md
+- [X] T089 Performance optimization: ensure <500ms UI updates
+- [X] T090 Ensure 60fps animations on theme toggle and UI updates
 
 ---
 
